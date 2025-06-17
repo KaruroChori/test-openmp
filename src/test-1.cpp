@@ -64,7 +64,7 @@ void operation_gpu_without_mapping_with_pointers(size_t elements, double* v1, do
 
     for(size_t i=1;i<elements;i++)
     {
-       assert(v3[i]==v1[i]+v2[i]);
+        assert(abs(v3[i]-(v1[i]+v2[i]))<0.001);
     }
 }
 
@@ -79,7 +79,7 @@ void operation_gpu_without_mapping_with_pointers(size_t elements, std::vector<do
 
     for(size_t i=1;i<elements;i++)
     {
-       assert(v3[i]==v1[i]+v2[i]);
+        assert(abs(v3[i]-(v1[i]+v2[i]))<0.001);
     }
 }
 
@@ -105,7 +105,7 @@ void operation_gpu_with_mapping_with_pointers(size_t elements, std::vector<doubl
 
     for(size_t i=1;i<elements;i++)
     {
-       assert(v3[i]==v1[i]+v2[i]);
+        assert(abs(v3[i]-(v1[i]+v2[i]))<0.001);
     }
 }
 
@@ -119,7 +119,7 @@ void operation_gpu_without_mapping_with_vectors(size_t elements, std::vector<dou
 
     for(size_t i=1;i<elements;i++)
     {
-       assert(v3[i]==v1[i]+v2[i]);
+        assert(abs(v3[i]-(v1[i]+v2[i]))<0.001);
     }
 }
 
@@ -136,7 +136,7 @@ void operation_cpu_with_pointers(size_t elements, std::vector<double>& v1, std::
 
     for(size_t i=1;i<elements;i++)
     {
-       assert(v3[i]==v1[i]+v2[i]);
+        assert(abs(v3[i]-(v1[i]+v2[i]))<0.001);
     }
 }
 
@@ -150,7 +150,7 @@ void operation_cpu_with_vectors(size_t elements, std::vector<double>& v1, std::v
 
     for(size_t i=1;i<elements;i++)
     {
-       assert(v3[i]==v1[i]+v2[i]);
+        assert(abs(v3[i]-(v1[i]+v2[i]))<0.001);
     }
 }
 

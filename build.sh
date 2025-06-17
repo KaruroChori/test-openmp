@@ -3,7 +3,7 @@
 rm -rf ./build-*
 
 
-LOGDIR="./logs/$(date +%Y-%m-%d)"
+LOGDIR="./logs/$(date +%Y-%m-%d-%H-%M-%S)"
 mkdir -p $LOGDIR
 
 #TOOO: maybe save results of meson in there as well.

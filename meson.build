@@ -39,9 +39,18 @@ endif
 
 openmp_link_args = openmp_compile_args
 
-exe = executable(
+executable(
     'test-1',
     './src/test-1.cpp',
+    dependencies: [ nanobench_dep ],
+    cpp_args: [openmp_compile_args],
+    link_args: [openmp_link_args],
+)
+
+
+ executable(
+    'test-2',
+    './src/test-2.cpp',
     dependencies: [ nanobench_dep ],
     cpp_args: [openmp_compile_args],
     link_args: [openmp_link_args],
