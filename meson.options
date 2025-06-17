@@ -1,0 +1,7 @@
+option('usm', type : 'boolean', value : false,
+       description : 'Use Unified Shared Memory')
+
+option('ua', type : 'boolean', value : false,
+       description : 'Use Unified Addres')
+
+option('offload', type : 'string', value : '')

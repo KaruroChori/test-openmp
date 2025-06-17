@@ -1,0 +1,12 @@
+/.cache/
+/.clangd/
+/.venv/
+/build/
+/build.*/
+/build-*/
+/subprojects/*
+!/subprojects/packagefiles/
+!/subprojects/nanobench.wrap
+*.autogen.*
+/private/
+/.vscode/
