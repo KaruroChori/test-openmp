@@ -4,7 +4,7 @@ rm -rf ./build-*
 
 
 LOGDIR="./logs/$(date +%Y-%m-%d)"
-mkdir -p LOGDIR
+mkdir -p $LOGDIR
 
 #TOOO: maybe save results of meson in there as well.
 
@@ -18,8 +18,8 @@ meson setup build-2 -Doptimization=3 -Dbuildtype=release -Dusm=true -Dua=true -D
 meson compile -C build-2
 
 
-nvidia-smi > "$NAME/nvidia.info"
-cat /proc/cpuinfo > "$NAME/cpu.info"
-./build-0/test-1 > "$NAME/clang-21.nvptx.log"
-./build-1/test-1 > "$NAME/clang-21.nvptx-cuda.log"
-./build-2/test-1 > "$NAME/clang-15.nvptx.log"
+nvidia-smi > "$LOGDIR/nvidia.info"
+cat /proc/cpuinfo > "$LOGDIR/cpu.info"
+./build-0/test-1 > "$LOGDIR/clang-21.nvptx.log"
+./build-1/test-1 > "$LOGDIR/clang-21.nvptx-cuda.log"
+./build-2/test-1 > "$LOGDIR/clang-15.nvptx.log"
