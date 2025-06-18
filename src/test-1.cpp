@@ -14,7 +14,7 @@
     #pragma omp requires unified_address
 #endif
 
-double speed_measurement (void (*operation)(size_t,std::vector<double>&, std::vector<double>&, std::vector<double>&), size_t elements,std::vector<double>& v1, std::vector<double>& v2, std::vector<double>&v3 )
+double speed_measurement (void (*operation)(size_t,std::vector<double>&, std::vector<double>&, std::vector<double>&), size_t elements,std::vector<double>& v1, std::vector<double>& v2, std::vector<double>&v3, bool skip_test=false )
 {
     using std::chrono::high_resolution_clock;
     using std::chrono::duration_cast;
@@ -32,7 +32,7 @@ double speed_measurement (void (*operation)(size_t,std::vector<double>&, std::ve
     operation(elements,v1,v2,v3);
     auto t2 = high_resolution_clock::now();
 
-    for(size_t i=1;i<elements;i++)
+    if(!skip_test)for(size_t i=1;i<elements;i++)
     {
         assert(abs(v3[i]-(v1[i]+v2[i]))<0.001);
     }
@@ -42,7 +42,7 @@ double speed_measurement (void (*operation)(size_t,std::vector<double>&, std::ve
     return ms_double.count();
 }
 
-double speed_measurement2 (void (*operation)(size_t,double*, double*, double*), size_t elements,std::vector<double>& v1, std::vector<double>& v2, std::vector<double>&v3 )
+double speed_measurement2 (void (*operation)(size_t,double*, double*, double*), size_t elements,std::vector<double>& v1, std::vector<double>& v2, std::vector<double>&v3, bool skip_test=false)
 {
     using std::chrono::high_resolution_clock;
     using std::chrono::duration_cast;
@@ -58,13 +58,13 @@ double speed_measurement2 (void (*operation)(size_t,double*, double*, double*), 
     return ms_double.count();
     #pragma omp target exit data map (from: v3d[0:elements], v2d[0:elements], v1d[0:elements] )
 
-    for(size_t i=1;i<elements;i++)
+    if(!skip_test)for(size_t i=1;i<elements;i++)
     {
         assert(abs(v3[i]-(v1[i]+v2[i]))<0.001);
     }
 }
 
-double speed_measurement3 (void (*operation)(size_t,std::vector<double>&, std::vector<double>&, std::vector<double>&), size_t elements,std::vector<double>& v1, std::vector<double>& v2, std::vector<double>&v3 )
+double speed_measurement3 (void (*operation)(size_t,std::vector<double>&, std::vector<double>&, std::vector<double>&), size_t elements,std::vector<double>& v1, std::vector<double>& v2, std::vector<double>&v3, bool skip_test=false)
 {
     using std::chrono::high_resolution_clock;
     using std::chrono::duration_cast;
@@ -80,7 +80,7 @@ double speed_measurement3 (void (*operation)(size_t,std::vector<double>&, std::v
     return ms_double.count();
     #pragma omp target exit data map (from: v3d[0:elements], v2d[0:elements], v1d[0:elements] )
 
-    for(size_t i=1;i<elements;i++)
+    if(!skip_test)for(size_t i=1;i<elements;i++)
     {
         assert(abs(v3[i]-(v1[i]+v2[i]))<0.001);
     }
@@ -88,7 +88,7 @@ double speed_measurement3 (void (*operation)(size_t,std::vector<double>&, std::v
 
 void operation_gpu_without_mapping_with_pointers(size_t elements, double* v1, double* v2, double *v3)
 {
-    #pragma omp target teams distribute parallel for simd
+    #pragma omp target teams distribute parallel for 
     for(size_t i=1;i<elements;i++)
     {
        v3[i]=v1[i]+v2[i];
@@ -98,7 +98,7 @@ void operation_gpu_without_mapping_with_pointers(size_t elements, double* v1, do
 void operation_gpu_without_mapping_with_pointers(size_t elements, std::vector<double>& v1, std::vector<double>& v2, std::vector<double>&v3)
 {
     double* v1d=v1.data(),*v2d=v2.data(),*v3d=v3.data();
-    #pragma omp target teams distribute parallel for simd
+    #pragma omp target teams distribute parallel for 
     for(size_t i=1;i<elements;i++)
     {
         v3d[i]=v1d[i]+v2d[i];
@@ -117,7 +117,7 @@ void operation_gpu_with_mapping_with_pointers(size_t elements, std::vector<doubl
 
     #pragma omp taskwait
 
-    #pragma omp target teams distribute parallel for simd
+    #pragma omp target teams distribute parallel for 
     for(size_t i=1;i<elements;i++)
     {
        v3d[i]=v1d[i]+v2d[i];
@@ -128,7 +128,7 @@ void operation_gpu_with_mapping_with_pointers(size_t elements, std::vector<doubl
 
 void operation_gpu_without_mapping_with_vectors(size_t elements, std::vector<double>& v1, std::vector<double>& v2, std::vector<double>&v3)
 {
-    #pragma omp target teams distribute parallel for simd
+    #pragma omp target teams distribute parallel for 
     for(size_t i=1;i<elements;i++)
     {
        v3[i]=v1[i]+v2[i];
@@ -195,8 +195,11 @@ int main()
     dur=speed_measurement(operation_gpu_without_mapping_with_vectors, elements,v1b,v2b,v3b);
     std::cout<<"on GPU without mapping with vectors:"<<dur<<"\n";
 
-    dur=speed_measurement(operation_gpu_without_mapping_with_pointers, elements,v1c,v2c,v3c);
+    dur=speed_measurement(operation_gpu_without_mapping_with_pointers, elements,v1c,v2c,v3c, true);
     std::cout<<"on GPU without mapping with pointers:"<<dur<<"\n";
+
+    dur=speed_measurement(operation_gpu_without_mapping_with_pointers, elements,v1c,v2c,v3c);
+    std::cout<<"on GPU without mapping with pointers II:"<<dur<<"\n";
 
     dur=speed_measurement2(operation_gpu_without_mapping_with_pointers, elements,v1d,v2d,v3d);
     std::cout<<"on GPU already mapped vector with pointers:"<<dur<<"\n";
